@@ -9,6 +9,8 @@ format:
         error: true
         code-annotation: below
 engine: julia
+julia:
+    exeflags: ["+1.11.5"]
 format-links: []
 ---
 
@@ -21,7 +23,7 @@ format-links: []
 ::: {.callout-important icon=false}
 ### Due Date
 
-Thursday, 12/05/24, 9:00pm 
+Thursday, 12/04/24, 9:00pm 
 :::
 
 ::: {.content-visible when-format="html"}
@@ -43,6 +45,7 @@ Otherwise, you can [find the Github repository here]({{< var github_org.repo >}}
 ### Instructions
 
 - In Problem 1, you will use mixed integer programming to solve a waste load allocation problem.
+- In Problem 2, you will formulate a stochastic optimization problem.
 
 :::
 
@@ -164,7 +167,7 @@ Draw a diagram showing the flows of waste between the cities and the facilities.
 
 ### Problem 2 (6 points)
 
-Consider a two-period economic dispatch problem, based on the multi-period example from Lecture 14 (on 10/29). The generator data, including ramping constraints for each generator, is provided in `data/generators.csv.' In period 1, the demand is $d_1 = 1400 \text{MW}$. In period 2, the demand is projected to be $d_2 = 1600 \text{MW}$, but there is a 25% probability that it is $1700 \text{MW}. In the first period, the solar capacity factor is $0.9$ and the wind capacity factor is $0.45$, but in the second period, there is some uncertainty: the forecasted solar and wind capacity factors are $0.95$ and $0.4$, respectively, but there is a 30% probability that they are $0.75$ and $0.5$.  Your goal is to identify how to dispatch your generators to minimize the cost of meeting demand.
+Consider a two-period economic dispatch problem, based on the multi-period example from Lecture 14 (on 10/29). The generator data, including ramping constraints for each generator, is provided in `data/generators.csv.' In period 1, the demand is $d_1 = 1100 \text{MW}$. In period 2, the demand is projected to be $d_2 = 1200 \text{MW}$, but there is a 25% probability that it is $1500 \text{MW}. In the first period, the solar capacity factor is $0.9$ and the wind capacity factor is $0.45$, but in the second period, there is some uncertainty: the forecasted solar and wind capacity factors are $0.95$ and $0.4$, respectively, but there is a 30% probability that they are $0.75$ and $0.5$.  Your goal is to identify how to dispatch your generators to minimize the cost of meeting demand.
 
 ::: {.cell .markdown}
 
