@@ -1,57 +1,54 @@
+name: Render PDF
 on:
-  workflow_dispatch:
   push:
-    branches: 
-      - main
-      - Fall23
-    paths-ignore:
-      - '**/README.md'
-      - '**.ipynb'
-
-name: Quarto Publish
-
+    paths: '**.ipynb'
+  workflow_dispatch:
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    permissions:             
+      contents: write        
+      pull-requests: write 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
-          version: pre-release
-          tinytex: true
-        
-      - name: Set up Python
+          persist-credentials: false
+
+      - name: Setup Julia
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
-          
-      - name: Install Jupyter
+          python-version: '3.12'
+
+      - name: Install Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          version: 1.7.31
+          tinytex: true
+
+      - name: Install librsvg2
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install jupyter
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin
 
-      - name: Install Julia
-        uses: julia-actions/setup-julia@v1
+      - name: Convert notebooks to PDF
+        run: |
+          for file in *.ipynb; do
+            quarto render "$file" --to pdf
+          done
+
+      - name: Commit
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add *.pdf
+          git commit -m "convert notebook to PDF"
+
+      - name: Push
+        uses: ad-m/github-push-action@master
         with:
-          version: 1.9
-
-      - name: Install IJulia
-        run: julia -e 'using Pkg; Pkg.activate("."); Pkg.add("IJulia"); Pkg.instantiate(); Pkg.build("IJulia")'
-
-      - name: Render Notebook
-        uses: quarto-dev/quarto-actions/render@v2
-        with:
-          to: ipynb
-          path: hw05.qmd
-
-      - name: Commit and Push
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          file_pattern: '*.ipynb'
-          commit_message: "Build notebook from ${{ github.sha }}"
-  
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          force: True
